@@ -96,10 +96,9 @@ Add the necessary files to run the MCP server as a custom handler in Azure Funct
 
 Modify the MCP server code to listen for HTTP requests on the port specified by the Azure Functions environment variable `FUNCTIONS_CUSTOMHANDLER_PORT`. This is typically done by reading the environment variable in your server code and using it to set the port for the HTTP server.
 
-Additional language-specific instructions:
+**Important** additional language-specific instructions:
 - **Python**:
     - If the server uses FastMCP, you can pass this port to the `FastMCP` constructor like: `mcp = FastMCP("my-mcp", port=mcp_port)`.
-    - Modify the server so that if `/home/site/wwwroot/.python_packages/lib/site-packages` exists, add it to the Python path. This is where Python packages are installed when deployed to Azure Functions.
 
 ## Add AzD template
 
@@ -115,6 +114,9 @@ Also in the Bicep files, change the runtime and runtime version to based on the 
 - For Node.js, use `node` and `22`
 - For Python, use `python` and the version of Python used in the MCP server project (e.g., `3.10`)
 - For C#, use `custom` and `1.0`
+
+Additionally, for Python, add an app setting to the function app:
+- `PYTHONPATH` = `/home/site/wwwroot/.python_packages/lib/site-packages`
 
 ## Additional files
 
