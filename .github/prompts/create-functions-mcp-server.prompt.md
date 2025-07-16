@@ -12,6 +12,18 @@ Your goal is to take the MCP server in the current codebase and add the necessar
 - Languages supported: Node.js (TypeScript, JavaScript), Python, C#
 - Create the Azure Functions project structure in the root of the MCP server project (e.g., folder where `package.json`, or `*.csproj` is located). If you can't find the root, ask for it.
 
+### Additional validations
+
+**Important**: Ensure the MCP server uses streamable HTTP transport and is stateless. If either of these conditions is not met, the MCP server will not work correctly in Azure Functions. Do not proceed.
+
+Ensure the MCP server uses streamable HTTP transport, not stdio.
+- For Node.js, look for code that uses `StreamableHTTPServerTransport`.
+- For Python, if using FastMCP, ensure the server is run with `transport="streamable-http"`.
+
+Ensure the MCP server is stateless.
+- For Node.js, `StreamableHTTPServerTransport` must not have `sessionIdGenerator` configured.
+- For Python, if using FastMCP, ensure the server is created with `stateless_http=True`.
+
 ## Steps
 
 Take these general steps to convert the MCP server into an Azure Functions app.
@@ -85,7 +97,9 @@ Add the necessary files to run the MCP server as a custom handler in Azure Funct
 Modify the MCP server code to listen for HTTP requests on the port specified by the Azure Functions environment variable `FUNCTIONS_CUSTOMHANDLER_PORT`. This is typically done by reading the environment variable in your server code and using it to set the port for the HTTP server.
 
 Additional language-specific instructions:
-- **Python**: If the server uses FastMCP, you can pass this port to the `FastMCP` constructor like: `mcp = FastMCP("my-mcp", port=mcp_port)`.
+- **Python**:
+    - If the server uses FastMCP, you can pass this port to the `FastMCP` constructor like: `mcp = FastMCP("my-mcp", port=mcp_port)`.
+    - Modify the server so that if `/home/site/wwwroot/.python_packages/lib/site-packages` exists, add it to the Python path. This is where Python packages are installed when deployed to Azure Functions.
 
 ## Add AzD template
 
