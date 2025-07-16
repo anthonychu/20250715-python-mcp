@@ -6,7 +6,7 @@ import os
 
 # Initialize FastMCP server
 
-mcp = FastMCP("weather")
+mcp = FastMCP("weather", stateless_http=True, json_response=True)
 
 
 # Constants
